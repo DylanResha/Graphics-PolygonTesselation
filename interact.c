@@ -14,15 +14,15 @@ int COLORS_DEFINED;
 
 const int WINDOW_POSITION_X = 100;
 const int WINDOW_POSITION_Y = 100;
-const int WINDOW_MAX_X = 400;
-const int WINDOW_MAX_Y = 400;
+const int WINDOW_MAX_X = 700;
+const int WINDOW_MAX_Y = 700;
 
 // Specify the coordinate ranges for the world coordinates in the 2D Frame
 
 const float WORLD_COORDINATE_MIN_X = 0.0;
-const float WORLD_COORDINATE_MAX_X = 400.0;
+const float WORLD_COORDINATE_MAX_X = 700.0;
 const float WORLD_COORDINATE_MIN_Y = 0.0;
-const float WORLD_COORDINATE_MAX_Y = 400.0;
+const float WORLD_COORDINATE_MAX_Y = 700.0;
 
 
 void myglutInit( int argc, char** argv )
@@ -55,7 +55,7 @@ void myInit(void)
       glMatrixMode(GL_MODELVIEW);
 }
 
-
+//////////////////////////////////////////////////////////////////
 void display( void )
 {
 
@@ -91,7 +91,7 @@ void display( void )
 
  }
 
-
+//////////////////////////////////////////////////////////////////
 void drawBox( int x, int y )
 {
     typedef GLfloat point[2];     
@@ -108,7 +108,7 @@ void drawBox( int x, int y )
         glFlush();
 }
 
-
+//////////////////////////////////////////////////////////////////
 void eraseBox( int x, int y )
 {
     typedef GLfloat point[2];     
@@ -125,43 +125,50 @@ void eraseBox( int x, int y )
     glFlush();
 }
 
-
+//////////////////////////////////////////////////////////////////
 void clearBox()
 {
        glClear(GL_COLOR_BUFFER_BIT); 
        glFlush();
 }
 
-
+//////////////////////////////////////////////////////////////////
 void mouse( int button, int state, int x, int y )
 { 
 
   if ( button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN )
      {
         printf ("%d   %d\n", x, y);
-        drawBox( x, y );
+        drawBox( x, WINDOW_MAX_Y-y );
      }
 
   if ( button == GLUT_LEFT_BUTTON && state == GLUT_DOWN )
      {
         printf ("%d   %d\n", x, y);
-        eraseBox( x, y );
+        eraseBox( x, WINDOW_MAX_Y-y );
      }
   
   if ( button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN )
      {
-        printf ("%d   %d\n", x, y);
+        printf ("%d   %d\n", x,
+y);
         clearBox();
      }
 }
 
-
+//////////////////////////////////////////////////////////////////
 void keyboard( unsigned char key, int x, int y )
 { 
   if ( key == 'q' || key == 'Q') exit(0);
 }
 
+//////////////////////////////////////////////////////////////////
+void lines()
+{
 
+
+}
+//////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
 
