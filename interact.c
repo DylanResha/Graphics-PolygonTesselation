@@ -4,6 +4,8 @@
 
 #include <GL/glut.h>
 #include <stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 // These are defined in a global scope
 
@@ -25,6 +27,21 @@ const float WORLD_COORDINATE_MIN_Y = 0.0;
 const float WORLD_COORDINATE_MAX_Y = 700.0;
 
 
+//////////////////////////////////////////////////////////////////
+typedef struct{
+	int x;
+	int y;
+
+}coordinates;
+////////////////////////////////////////////////////////////////// 
+struct node {
+	coordinates coord;
+	struct node *next;
+};
+
+struct node *head = NULL;
+struct node *current = NULL;
+//////////////////////////////////////////////////////////////////
 void myglutInit( int argc, char** argv )
 {
     glutInit(&argc,argv);
@@ -34,7 +51,7 @@ void myglutInit( int argc, char** argv )
     glutCreateWindow("Mouse and Keyboard Interaction"); /* window title */
 }
 
-
+//////////////////////////////////////////////////////////////////
 void myInit(void)
 {
  
@@ -42,7 +59,7 @@ void myInit(void)
 
       glClearColor(1.0, 1.0, 1.0, 1.0); /* white background */
       glColor3f(1.0, 0.0, 0.0); /* draw in red */
-      glPointSize(10.0);
+      glPointSize(1.0);
 
       COLORS_DEFINED = 0;
 
@@ -77,14 +94,14 @@ void display( void )
 
     /* define point */
 
-    p[0] = 100; 
+   /* p[0] = 100; 
     p[1] = 100;
    
     /* plot new point */
 
-        glBegin(GL_POINTS);
+      /*  glBegin(GL_POINTS);
             glVertex2fv(p); 
-        glEnd();
+        glEnd();*/
   
      
      glFlush(); /* clear buffers */
@@ -133,45 +150,78 @@ void clearBox()
 }
 
 //////////////////////////////////////////////////////////////////
-void mouse( int button, int state, int x, int y )
+void mouse( int button, int state, int x, int y)
 { 
 
   if ( button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN )
      {
         printf ("%d   %d\n", x, y);
+	coordinates coord;
+	coord.x = x;
+	coord.y = y;
+	insert(coord);
         drawBox( x, WINDOW_MAX_Y-y );
      }
 
   if ( button == GLUT_LEFT_BUTTON && state == GLUT_DOWN )
      {
-        printf ("%d   %d\n", x, y);
-        eraseBox( x, WINDOW_MAX_Y-y );
+        
      }
   
-  if ( button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN )
+ /* if ( button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN )
      {
-        printf ("%d   %d\n", x,
-y);
+        printf ("%d   %d\n", x,y);
         clearBox();
-     }
+     }*/
 }
 
 //////////////////////////////////////////////////////////////////
 void keyboard( unsigned char key, int x, int y )
 { 
   if ( key == 'q' || key == 'Q') exit(0);
+  if ( key == 'f' || key == 'F')        ;
+  if ( key == 't' || key == 'T')        ;
+  if ( key == 'i' || key == 'I')        ;
+  if ( key == 'p' || key == 'P')        ;
 }
 
 //////////////////////////////////////////////////////////////////
-void lines()
-{
-
+void makeLine(){
+	glBegin(GL_LINES);
+	 glVertex2i(,);
+	 glVertex2i(,);
+	glEnd();
 
 }
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+void insert(coordinates coord){
+ struct node *link = (struct node*) malloc(sizeof(struct node));
+
+ link->coord=coord;
+ link->next= head;
+ head=link;
+}
+//////////////////////////////////////////////////////////////////
+void printList()
+{
+ struct node *ptr = head;
+
+ printf("\n[head] =>");
+ while(ptr != NULL){
+	printf(" %d =>",ptr->coord.x," %d",ptr->coord.y);
+	//printf(",",ptr->coord.y);
+	ptr=ptr->next;
+	}
+ printf(" [null]\n");
+
+}
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
-
+    
     myglutInit(argc,argv); /* Set up Window */
     myInit(); /* set attributes */
 
