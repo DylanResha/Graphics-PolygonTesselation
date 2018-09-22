@@ -179,7 +179,7 @@ bool checkIntersect(){
 		float y2 = (WINDOW_MAX_Y-(coords.at(i+1).y));
 		float y3 = (WINDOW_MAX_Y-(coords.at(j).y));
 		float y4 = (WINDOW_MAX_Y-(coords.at(j+1).y));
-		cout<<x1<<" "<<x2<<" "<<x3<<" "<<x4<<" "<<y1<<" "<<y2<<" "<<y3<<" "<<y4<<endl;
+		//cout<<x1<<" "<<x2<<" "<<x3<<" "<<x4<<" "<<y1<<" "<<y2<<" "<<y3<<" "<<y4<<endl;
 		//parts of the matrix needed to find determinate
 		float p1= (x3-x1);
 		float p2= -(y4-y3);
@@ -187,16 +187,16 @@ bool checkIntersect(){
 		float p4= -(x4-x3);
 		float p5= (x2-x1);
 		float p6= (y2-y1);
-		cout<<p1<<" "<<p2<<" "<<p3<<" "<<p4<<" "<<p5<<" "<<p6<<endl;
+		//cout<<p1<<" "<<p2<<" "<<p3<<" "<<p4<<" "<<p5<<" "<<p6<<endl;
 		//find nomenator determinate and denominator determinate
 		float uaNomDet= ((p1*p2)-(p3*p4));
 		float ubNomDet= ((p5*p3)-(p6*p1));
 		float denomDet= ((p5*p2)-(p6*p4));
-		cout<<uaNomDet<<" "<<ubNomDet<<" "<<denomDet<<" in if"<<endl;
+		//cout<<uaNomDet<<" "<<ubNomDet<<" "<<denomDet<<" in if"<<endl;
 	  // finds ua from two determinates		
 	  float ua = (uaNomDet/denomDet);	
 	  float ub = (ubNomDet/denomDet);	 		
-		cout<<ua<<" "<<ub<<endl;
+		//cout<<ua<<" "<<ub<<endl;
 		
 	  if((fabs(ua)<1 && fabs(ub)<1)&&(fabs(ua)>0 && fabs(ub)>0)){interCount++;}
 	  	
@@ -212,7 +212,7 @@ bool checkIntersect(){
 		float y2 = (WINDOW_MAX_Y-(coords.at(k+1).y));
 		float y3 = (WINDOW_MAX_Y-(coords.at(j).y));
 		float y4 = (WINDOW_MAX_Y-(coords.at(k).y));
-		cout<<x1<<" "<<x2<<" "<<x3<<" "<<x4<<" "<<y1<<" "<<y2<<" "<<y3<<" "<<y4<<endl;
+		//cout<<x1<<" "<<x2<<" "<<x3<<" "<<x4<<" "<<y1<<" "<<y2<<" "<<y3<<" "<<y4<<endl;
 		//parts of the matrix needed to find determinate
 		float p1= (x3-x1);
 		float p2= -(y4-y3);
@@ -220,16 +220,16 @@ bool checkIntersect(){
 		float p4= -(x4-x3);
 		float p5= (x2-x1);
 		float p6= (y2-y1);
-		cout<<p1<<" "<<p2<<" "<<p3<<" "<<p4<<" "<<p5<<" "<<p6<<endl;
+		//cout<<p1<<" "<<p2<<" "<<p3<<" "<<p4<<" "<<p5<<" "<<p6<<endl;
 		//find nomenator determinate and denominator determinate
 		float uaNomDet= ((p1*p2)-(p3*p4));
 		float ubNomDet= ((p5*p3)-(p6*p1));
 		float denomDet= ((p5*p2)-(p6*p4));
-		cout<<uaNomDet<<" "<<ubNomDet<<" "<<denomDet<<" in else"<<endl;
+		//cout<<uaNomDet<<" "<<ubNomDet<<" "<<denomDet<<" in else"<<endl;
 	  // finds ua from two determinates		
 	  float ua = (uaNomDet/denomDet);	
 	  float ub = (ubNomDet/denomDet);	 		
-		cout<<ua<<" "<<ub<<endl;
+		//cout<<ua<<" "<<ub<<endl;
 	   if((fabs(ua)<1 && fabs(ub)<1)&&(fabs(ua)>0 && fabs(ub)>0)){interCount++;}
 		
 	  }
@@ -241,6 +241,58 @@ bool checkIntersect(){
   else
 	return false;
 }
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+void drawNoTess(){
+
+for(int i=0; i<coords.size()-1; i++){
+     if(coords.size()>=4 && (i+3)<=(coords.size()-1)){	
+	glBegin(GL_POLYGON);
+	 glVertex2i(coords.at(i).x,coords.at(i).y);
+	 glVertex2i(coords.at(i+1).x,coords.at(i+1).y);
+	 glVertex2i(coords.at(i+2).x,coords.at(i+2).y);
+	 glVertex2i(coords.at(i+3).x,coords.at(i+3).y);
+    	glEnd();
+      }
+     else if(coords.size()==3){
+	glBegin(GL_POLYGON);
+	 glVertex2i(coords.at(i).x,coords.at(i).y);
+	 glVertex2i(coords.at(i+1).x,coords.at(i+1).y);
+	 glVertex2i(coords.at(i+2).x,coords.at(i+2).y);
+	 glVertex2i(coords.at(i).x,coords.at(i).y);
+    	glEnd();
+      }	
+
+}
+	int k=0;
+	int l= ((coords.size()-1)*(1/4));
+	int m= ((coords.size()-1)*(3/4));
+/////////////////////////////////////////////////////////////////
+	glBegin(GL_POLYGON);
+	 glVertex2i(coords.front().x,coords.front().y);
+	 glVertex2i(coords.at(k+1).x,coords.at(k+1).y);
+	 glVertex2i(coords.at(k+2).x,coords.at(k+2).y);
+	 glVertex2i(coords.back().x,coords.back().y);
+    	glEnd();
+/////////////////////////////////////////////////////////////////
+	glBegin(GL_POLYGON);
+	 glVertex2i(coords.front().x,coords.front().y);
+	 glVertex2i(coords.at(l).x,coords.at(l).y);
+	 glVertex2i(coords.at(m).x,coords.at(m).y);
+	 glVertex2i(coords.back().x,coords.back().y);
+    	glEnd();
+
+
+	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE);
+	glFlush();
+
+
+}
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 void mouse( int button, int state, int x, int y)
 { 
@@ -282,12 +334,11 @@ void mouse( int button, int state, int x, int y)
         clearBox();
      }*/
 }
-
 //////////////////////////////////////////////////////////////////
 void keyboard( unsigned char key, int x, int y )
 { 
   if ( key == 'q' || key == 'Q') exit(0);
-  if ( key == 'f' || key == 'F')        ;
+  if ( key == 'f' || key == 'F') drawNoTess();
   if ( key == 't' || key == 'T')        ;
   if ( key == 'i' || key == 'I')        ;
   if ( key == 'p' || key == 'P')        ;
