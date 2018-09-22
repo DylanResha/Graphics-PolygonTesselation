@@ -54,7 +54,7 @@ void myInit(void)
 
       glClearColor(1.0, 1.0, 1.0, 1.0); /* white background */
       glColor3ub(200, 0, 255); /* draw in red */
-      glPointSize(1.0);
+      glPointSize(10.0);
 
       COLORS_DEFINED = 0;
 
@@ -158,7 +158,85 @@ void drawLines(){
 	glEnd();
 	glFlush();
 }
+//////////////////////////////////////////////////////////////////
+bool checkIntersect(){
 
+//counts if any intersections occur
+ int interCount = 0;	
+
+	for(int i=0; i<coords.size()-1; i++){	
+	 for(int j=1; j<coords.size()-1; j++){
+	   
+	   if(j!=coords.size()-1){
+		//all x's and y's
+		int x1 = (coords.at(i).x);
+		int x2 = (coords.at(i+1).x);
+		int x3 = (coords.at(j).x);
+		int x4 = (coords.at(j+1).x);
+		int y1 = (WINDOW_MAX_Y-(coords.at(i).y));
+		int y2 = (WINDOW_MAX_Y-(coords.at(i+1).y));
+		int y3 = (WINDOW_MAX_Y-(coords.at(j).y));
+		int y4 = (WINDOW_MAX_Y-(coords.at(j+1).y));
+		cout<<x1<<" "<<x2<<" "<<x3<<" "<<x4<<" "<<y1<<" "<<y2<<" "<<y3<<" "<<y4<<endl;
+		//parts of the matrix needed to find determinate
+		int p1= (x3-x1);
+		int p2= -(y4-y3);
+		int p3= (y3-y1);
+		int p4= -(x4-x3);
+		int p5= (x2-x1);
+		int p6= (y2-y1);
+		cout<<p1<<" "<<p2<<" "<<p3<<" "<<p4<<" "<<p5<<" "<<p6<<endl;
+		//find nomenator determinate and denominator determinate
+		int uaNomDet= ((p1*p2)-(p3*p4));
+		int ubNomDet= ((p5*p3)-(p6*p1));
+		int denomDet= ((p5*p2)-(p6*p4));
+		cout<<uaNomDet<<" "<<ubNomDet<<" "<<denomDet<<endl;
+	  // finds ua from two determinates		
+	  float ua = (float)(uaNomDet/denomDet);	
+	  float ub = (float)(ubNomDet/denomDet);	 		
+		cout<<ua<<" "<<ub<<endl;
+	  if((ua>1)&&(ub>1)){interCount++;}
+	  	
+	  }
+	  /*else{
+	   //all x's and y's
+		int x1 = (coords.at(i).x);
+		int x2 = (coords.at(i+1).x);
+		int x3 = (coords.at(i).x);
+		int x4 = (coords.at(j).x);
+		int y1 = (WINDOW_MAX_Y-(coords.at(i).y));
+		int y2 = (WINDOW_MAX_Y-(coords.at(i+1).y));
+		int y3 = (WINDOW_MAX_Y-(coords.at(i).y));
+		int y4 = (WINDOW_MAX_Y-(coords.at(j).y));
+		cout<<x1<<" "<<x2<<" "<<x3<<" "<<x4<<" "<<y1<<" "<<y2<<" "<<y3<<" "<<y4<<endl;
+		//parts of the matrix needed to find determinate
+		int p1= (x3-x1);
+		int p2= -(y4-y3);
+		int p3= (y3-y1);
+		int p4= -(x4-x3);
+		int p5= (x2-x1);
+		int p6= (y2-y1);
+		cout<<p1<<" "<<p2<<" "<<p3<<" "<<p4<<" "<<p5<<" "<<p6<<endl;
+		//find nomenator determinate and denominator determinate
+		int uaNomDet= ((p1*p2)-(p3*p4));
+		int ubNomDet= ((p5*p3)-(p6*p1));
+		int denomDet= ((p5*p2)-(p6*p4));
+		cout<<uaNomDet<<" "<<ubNomDet<<" "<<denomDet<<endl;
+	  // finds ua from two determinates		
+	  float ua = (float)(uaNomDet/denomDet);	
+	  float ub = (float)(ubNomDet/denomDet);	 		
+		cout<<ua<<" "<<ub<<endl;
+	   if((ua>1)&&(ub>1)){interCount++;}
+		
+	  }*/
+	 }
+	}
+  if(interCount>0)
+	return true;
+
+  else
+	return false;
+}
 //////////////////////////////////////////////////////////////////
 void mouse( int button, int state, int x, int y)
 { 
@@ -184,6 +262,13 @@ void mouse( int button, int state, int x, int y)
 	coords.push_back(temp); 
         drawBox( x, WINDOW_MAX_Y-y );
 	drawLines();
+	 if(checkIntersect()){
+	  cout<<"The polygon created by these points is invalid due to two lines intersecting."<<endl;
+	  //clearBox();	
+	  }
+	 else{
+	   cout<<"no intersections"<<endl;
+	  }
 	
      }
   
