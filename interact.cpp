@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <vector>
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 
@@ -104,7 +105,7 @@ void display( void )
  }
 
 //////////////////////////////////////////////////////////////////
-void drawBox( int x, int y )
+void drawBox( float x, float y )
 {
     typedef GLfloat point[2];     
     point p;
@@ -121,7 +122,7 @@ void drawBox( int x, int y )
 }
 
 //////////////////////////////////////////////////////////////////
-void eraseBox( int x, int y )
+void eraseBox( float x, float y )
 {
     typedef GLfloat point[2];     
     point p;
@@ -167,68 +168,71 @@ bool checkIntersect(){
 	for(int i=0; i<coords.size()-1; i++){	
 	 for(int j=1; j<coords.size()-1; j++){
 	   
+	   if(i==j){j++;}
 	   if(j!=coords.size()-1){
 		//all x's and y's
-		int x1 = (coords.at(i).x);
-		int x2 = (coords.at(i+1).x);
-		int x3 = (coords.at(j).x);
-		int x4 = (coords.at(j+1).x);
-		int y1 = (WINDOW_MAX_Y-(coords.at(i).y));
-		int y2 = (WINDOW_MAX_Y-(coords.at(i+1).y));
-		int y3 = (WINDOW_MAX_Y-(coords.at(j).y));
-		int y4 = (WINDOW_MAX_Y-(coords.at(j+1).y));
+		float x1 = (coords.at(i).x);
+		float x2 = (coords.at(i+1).x);
+		float x3 = (coords.at(j).x);
+		float x4 = (coords.at(j+1).x);
+		float y1 = (WINDOW_MAX_Y-(coords.at(i).y));
+		float y2 = (WINDOW_MAX_Y-(coords.at(i+1).y));
+		float y3 = (WINDOW_MAX_Y-(coords.at(j).y));
+		float y4 = (WINDOW_MAX_Y-(coords.at(j+1).y));
 		cout<<x1<<" "<<x2<<" "<<x3<<" "<<x4<<" "<<y1<<" "<<y2<<" "<<y3<<" "<<y4<<endl;
 		//parts of the matrix needed to find determinate
-		int p1= (x3-x1);
-		int p2= -(y4-y3);
-		int p3= (y3-y1);
-		int p4= -(x4-x3);
-		int p5= (x2-x1);
-		int p6= (y2-y1);
+		float p1= (x3-x1);
+		float p2= -(y4-y3);
+		float p3= (y3-y1);
+		float p4= -(x4-x3);
+		float p5= (x2-x1);
+		float p6= (y2-y1);
 		cout<<p1<<" "<<p2<<" "<<p3<<" "<<p4<<" "<<p5<<" "<<p6<<endl;
 		//find nomenator determinate and denominator determinate
-		int uaNomDet= ((p1*p2)-(p3*p4));
-		int ubNomDet= ((p5*p3)-(p6*p1));
-		int denomDet= ((p5*p2)-(p6*p4));
-		cout<<uaNomDet<<" "<<ubNomDet<<" "<<denomDet<<endl;
+		float uaNomDet= ((p1*p2)-(p3*p4));
+		float ubNomDet= ((p5*p3)-(p6*p1));
+		float denomDet= ((p5*p2)-(p6*p4));
+		cout<<uaNomDet<<" "<<ubNomDet<<" "<<denomDet<<" in if"<<endl;
 	  // finds ua from two determinates		
-	  float ua = (float)(uaNomDet/denomDet);	
-	  float ub = (float)(ubNomDet/denomDet);	 		
+	  float ua = (uaNomDet/denomDet);	
+	  float ub = (ubNomDet/denomDet);	 		
 		cout<<ua<<" "<<ub<<endl;
-	  if((ua>1)&&(ub>1)){interCount++;}
+		
+	  if((fabs(ua)<1 && fabs(ub)<1)&&(fabs(ua)>0 && fabs(ub)>0)){interCount++;}
 	  	
 	  }
-	  /*else{
+	  else{
 	   //all x's and y's
-		int x1 = (coords.at(i).x);
-		int x2 = (coords.at(i+1).x);
-		int x3 = (coords.at(i).x);
-		int x4 = (coords.at(j).x);
-		int y1 = (WINDOW_MAX_Y-(coords.at(i).y));
-		int y2 = (WINDOW_MAX_Y-(coords.at(i+1).y));
-		int y3 = (WINDOW_MAX_Y-(coords.at(i).y));
-		int y4 = (WINDOW_MAX_Y-(coords.at(j).y));
+		int k = 0;
+		float x1 = (coords.at(k).x);
+		float x2 = (coords.at(k+1).x);
+		float x3 = (coords.at(j).x);
+		float x4 = (coords.at(k).x);
+		float y1 = (WINDOW_MAX_Y-(coords.at(k).y));
+		float y2 = (WINDOW_MAX_Y-(coords.at(k+1).y));
+		float y3 = (WINDOW_MAX_Y-(coords.at(j).y));
+		float y4 = (WINDOW_MAX_Y-(coords.at(k).y));
 		cout<<x1<<" "<<x2<<" "<<x3<<" "<<x4<<" "<<y1<<" "<<y2<<" "<<y3<<" "<<y4<<endl;
 		//parts of the matrix needed to find determinate
-		int p1= (x3-x1);
-		int p2= -(y4-y3);
-		int p3= (y3-y1);
-		int p4= -(x4-x3);
-		int p5= (x2-x1);
-		int p6= (y2-y1);
+		float p1= (x3-x1);
+		float p2= -(y4-y3);
+		float p3= (y3-y1);
+		float p4= -(x4-x3);
+		float p5= (x2-x1);
+		float p6= (y2-y1);
 		cout<<p1<<" "<<p2<<" "<<p3<<" "<<p4<<" "<<p5<<" "<<p6<<endl;
 		//find nomenator determinate and denominator determinate
-		int uaNomDet= ((p1*p2)-(p3*p4));
-		int ubNomDet= ((p5*p3)-(p6*p1));
-		int denomDet= ((p5*p2)-(p6*p4));
-		cout<<uaNomDet<<" "<<ubNomDet<<" "<<denomDet<<endl;
+		float uaNomDet= ((p1*p2)-(p3*p4));
+		float ubNomDet= ((p5*p3)-(p6*p1));
+		float denomDet= ((p5*p2)-(p6*p4));
+		cout<<uaNomDet<<" "<<ubNomDet<<" "<<denomDet<<" in else"<<endl;
 	  // finds ua from two determinates		
-	  float ua = (float)(uaNomDet/denomDet);	
-	  float ub = (float)(ubNomDet/denomDet);	 		
+	  float ua = (uaNomDet/denomDet);	
+	  float ub = (ubNomDet/denomDet);	 		
 		cout<<ua<<" "<<ub<<endl;
-	   if((ua>1)&&(ub>1)){interCount++;}
+	   if((fabs(ua)<1 && fabs(ub)<1)&&(fabs(ua)>0 && fabs(ub)>0)){interCount++;}
 		
-	  }*/
+	  }
 	 }
 	}
   if(interCount>0)
