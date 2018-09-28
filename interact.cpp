@@ -38,6 +38,17 @@ struct point{
 
 vector<point> coords;
 //////////////////////////////////////////////////////////////////
+struct line{
+	point a,b;
+
+};
+vector<line> lineList;
+//////////////////////////////////////////////////////////////////
+struct triangle{
+	point v1,v2,v3;
+};
+vector<triangle> triList;
+//////////////////////////////////////////////////////////////////
 void myglutInit( int argc, char** argv )
 {
     glutInit(&argc,argv);
@@ -55,7 +66,7 @@ void myInit(void)
 
       glClearColor(1.0, 1.0, 1.0, 1.0); /* white background */
       glColor3ub(200, 0, 255); /* draw in red */
-      glPointSize(10.0);
+      glPointSize(5.0);
 
       COLORS_DEFINED = 0;
 
@@ -160,25 +171,16 @@ void drawLines(){
 	glFlush();
 }
 //////////////////////////////////////////////////////////////////
-bool checkIntersect(){
-
-//counts if any intersections occur
- int interCount = 0;	
-
-	for(int i=0; i<coords.size()-1; i++){	
-	 for(int j=1; j<coords.size()-1; j++){
-	   
-	   if(i==j){j++;}
-	   if(j!=coords.size()-1){
-		//all x's and y's
-		float x1 = (coords.at(i).x);
-		float x2 = (coords.at(i+1).x);
-		float x3 = (coords.at(j).x);
-		float x4 = (coords.at(j+1).x);
-		float y1 = (WINDOW_MAX_Y-(coords.at(i).y));
-		float y2 = (WINDOW_MAX_Y-(coords.at(i+1).y));
-		float y3 = (WINDOW_MAX_Y-(coords.at(j).y));
-		float y4 = (WINDOW_MAX_Y-(coords.at(j+1).y));
+bool checkIntersect(int m, int l){
+//all x's and y's
+		float x1 = (lineList.at(m).a.x);
+		float x2 = (lineList.at(m).b.x);
+		float x3 = (lineList.at(l).a.x);
+		float x4 = (lineList.at(l).b.x);
+		float y1 = (WINDOW_MAX_Y-(lineList.at(m).a.y));
+		float y2 = (WINDOW_MAX_Y-(lineList.at(m).b.y));
+		float y3 = (WINDOW_MAX_Y-(lineList.at(l).a.y));
+		float y4 = (WINDOW_MAX_Y-(lineList.at(l).b.y));
 		//cout<<x1<<" "<<x2<<" "<<x3<<" "<<x4<<" "<<y1<<" "<<y2<<" "<<y3<<" "<<y4<<endl;
 		//parts of the matrix needed to find determinate
 		float p1= (x3-x1);
@@ -195,102 +197,185 @@ bool checkIntersect(){
 		//cout<<uaNomDet<<" "<<ubNomDet<<" "<<denomDet<<" in if"<<endl;
 	  // finds ua from two determinates		
 	  float ua = (uaNomDet/denomDet);	
-	  float ub = (ubNomDet/denomDet);	 		
-		//cout<<ua<<" "<<ub<<endl;
-		
-	  if((fabs(ua)<1 && fabs(ub)<1)&&(fabs(ua)>0 && fabs(ub)>0)){interCount++;}
-	  	
-	  }
-	  else{
-	   //all x's and y's
-		int k = 0;
-		float x1 = (coords.at(k).x);
-		float x2 = (coords.at(k+1).x);
-		float x3 = (coords.at(j).x);
-		float x4 = (coords.at(k).x);
-		float y1 = (WINDOW_MAX_Y-(coords.at(k).y));
-		float y2 = (WINDOW_MAX_Y-(coords.at(k+1).y));
-		float y3 = (WINDOW_MAX_Y-(coords.at(j).y));
-		float y4 = (WINDOW_MAX_Y-(coords.at(k).y));
-		//cout<<x1<<" "<<x2<<" "<<x3<<" "<<x4<<" "<<y1<<" "<<y2<<" "<<y3<<" "<<y4<<endl;
-		//parts of the matrix needed to find determinate
-		float p1= (x3-x1);
-		float p2= -(y4-y3);
-		float p3= (y3-y1);
-		float p4= -(x4-x3);
-		float p5= (x2-x1);
-		float p6= (y2-y1);
-		//cout<<p1<<" "<<p2<<" "<<p3<<" "<<p4<<" "<<p5<<" "<<p6<<endl;
-		//find nomenator determinate and denominator determinate
-		float uaNomDet= ((p1*p2)-(p3*p4));
-		float ubNomDet= ((p5*p3)-(p6*p1));
-		float denomDet= ((p5*p2)-(p6*p4));
-		//cout<<uaNomDet<<" "<<ubNomDet<<" "<<denomDet<<" in else"<<endl;
-	  // finds ua from two determinates		
-	  float ua = (uaNomDet/denomDet);	
-	  float ub = (ubNomDet/denomDet);	 		
-		//cout<<ua<<" "<<ub<<endl;
-	   if((fabs(ua)<1 && fabs(ub)<1)&&(fabs(ua)>0 && fabs(ub)>0)){interCount++;}
-		
-	  }
-	 }
-	}
-  if(interCount>0)
-	return true;
+	  float ub = (ubNomDet/denomDet);
 
-  else
-	return false;
+	if((ua<1&&ua>0)&&(ub<1&&ub>0)){return true;}
+	
+return false;
 }
 //////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
+bool polyIntersect(){
+
+
+	cout<<lineList.size()<<endl;
+	for(int i=0; i<lineList.size()-1; i++){
+	   int j = (i+1);	
+	 for(int k=0; k<coords.size()-3; k++){
+		
+		if(checkIntersect(i,j%lineList.size())){return true;}
+		j++;
+ 	  }
+	 }
+	
+
+return false;
+}
 //////////////////////////////////////////////////////////////////
 void drawNoTess(){
 
 for(int i=0; i<coords.size()-1; i++){
-     if(coords.size()>=4 && (i+3)<=(coords.size()-1)){	
+ for(int j=1; j<coords.size()-1; j++){     
 	glBegin(GL_POLYGON);
 	 glVertex2i(coords.at(i).x,coords.at(i).y);
 	 glVertex2i(coords.at(i+1).x,coords.at(i+1).y);
-	 glVertex2i(coords.at(i+2).x,coords.at(i+2).y);
-	 glVertex2i(coords.at(i+3).x,coords.at(i+3).y);
-    	glEnd();
-      }
-     else if(coords.size()==3){
-	glBegin(GL_POLYGON);
-	 glVertex2i(coords.at(i).x,coords.at(i).y);
-	 glVertex2i(coords.at(i+1).x,coords.at(i+1).y);
-	 glVertex2i(coords.at(i+2).x,coords.at(i+2).y);
-	 glVertex2i(coords.at(i).x,coords.at(i).y);
-    	glEnd();
-      }	
-
-}
-	int k=0;
-	int l= ((coords.size()-1)*(1/4));
-	int m= ((coords.size()-1)*(3/4));
-/////////////////////////////////////////////////////////////////
-	glBegin(GL_POLYGON);
-	 glVertex2i(coords.front().x,coords.front().y);
-	 glVertex2i(coords.at(k+1).x,coords.at(k+1).y);
-	 glVertex2i(coords.at(k+2).x,coords.at(k+2).y);
-	 glVertex2i(coords.back().x,coords.back().y);
-    	glEnd();
-/////////////////////////////////////////////////////////////////
-	glBegin(GL_POLYGON);
-	 glVertex2i(coords.front().x,coords.front().y);
-	 glVertex2i(coords.at(l).x,coords.at(l).y);
-	 glVertex2i(coords.at(m).x,coords.at(m).y);
-	 glVertex2i(coords.back().x,coords.back().y);
+	 glVertex2i(coords.at(j%coords.size()).x,coords.at(j%coords.size()).y);
+	 glVertex2i(coords.at(j+1%coords.size()).x,coords.at(j+1%coords.size()).y);
     	glEnd();
 
-
-	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE);
-	glFlush();
-
-
+  }
+ }
+glFlush();
 }
 //////////////////////////////////////////////////////////////////
+bool concave(int v1, int v2, int v3, vector<point>& temp){
+cout<<"in concave bool"<<endl;
+
+
+int L1x = (temp.at(v1%temp.size()).x)-(temp.at(v2%temp.size()).x);
+int L1y = (temp.at(v1%temp.size()).y)-(temp.at(v2%temp.size()).y);
+int L2x = (temp.at(v3%temp.size()).x)-(temp.at(v2%temp.size()).x);
+int L2y = (temp.at(v3%temp.size()).y)-(temp.at(v2%temp.size()).y);
+cout<<L1x<<","<<L1y<<","<<L2x<<","<<L2y<<endl;
+float cross = (L1x*L2y)-(L2x*L1y);
+
+if(cross<0){return true;}
+if(cross==0){temp.erase(temp.begin()+v2);}//removes midpoint if a straight line would be created
+
+return false;
+}
+//////////////////////////////////////////////////////////////////
+bool insidePoly(int v0, int v1, int v2, int v3,vector<point>& temp){
+	
+
+   if((temp.at(v2).y) > ((temp.at(v3).y))){
+	cout<<"in poly if"<<endl;	
+	//angle alpha
+	int aLength = sqrt((pow(temp.at(v2).x-temp.at(v1).x,2)+(pow(temp.at(v2).y-temp.at(v1).y,2))));
+	cout<<aLength<<endl;
+	int bLength = sqrt((pow(temp.at(v0).x-temp.at(v2).x,2)+(pow(temp.at(v0).y-temp.at(v2).y,2))));
+	cout<<bLength<<endl;
+	int cLength = sqrt((pow(temp.at(v1).x-temp.at(v0).x,2)+(pow(temp.at(v1).y-temp.at(v0).y,2))));
+	cout<<cLength<<endl;
+	
+		float alpha = (float) acos(((pow(aLength,2))+(pow(bLength,2))-(pow(cLength,2)))/(2*aLength*bLength));
+			cout<<alpha<<endl;
+
+
+	//angle beta
+	int dLength = sqrt((pow(temp.at(v2).x-temp.at(v1).x,2)+(pow(temp.at(v2).y-temp.at(v1).y,2))));
+	cout<<dLength<<endl;
+	int eLength = sqrt((pow(temp.at(v3).x-temp.at(v2).x,2)+(pow(temp.at(v3).y-temp.at(v2).y,2))));
+	cout<<eLength<<endl;
+	int fLength = sqrt((pow(temp.at(v1).x-temp.at(v3).x,2)+(pow(temp.at(v1).y-temp.at(v3).y,2))));
+	cout<<fLength<<endl;
+		
+		float beta = (float) acos(((pow(dLength,2))+(pow(eLength,2))-(pow(fLength,2)))/(2*dLength*eLength));
+			cout<<beta<<endl;
+
+	 	if(alpha<beta){return true;}
+	}
+   else{
+	cout<<"in poly else"<<endl;	
+	//angle alpha
+	int aLength = sqrt((pow(temp.at(v2).x-temp.at(v1).x,2)+(pow(temp.at(v2).y-temp.at(v1).y,2))));
+	cout<<aLength<<endl;
+	int bLength = sqrt((pow(temp.at(v0).x-temp.at(v2).x,2)+(pow(temp.at(v0).y-temp.at(v2).y,2))));
+	cout<<bLength<<endl;
+	int cLength = sqrt((pow(temp.at(v1).x-temp.at(v0).x,2)+(pow(temp.at(v1).y-temp.at(v0).y,2))));
+	cout<<cLength<<endl;
+	
+		float alpha = (float) acos(((pow(aLength,2))+(pow(bLength,2))-(pow(cLength,2)))/(2*aLength*bLength));
+			cout<<alpha<<endl;
+
+
+	//angle beta
+	int dLength = sqrt((pow(temp.at(v2).x-temp.at(v1).x,2)+(pow(temp.at(v2).y-temp.at(v1).y,2))));
+	cout<<dLength<<endl;
+	int eLength = sqrt((pow(temp.at(v3).x-temp.at(v2).x,2)+(pow(temp.at(v3).y-temp.at(v2).y,2))));
+	cout<<eLength<<endl;
+	int fLength = sqrt((pow(temp.at(v0).x-temp.at(v3).x,2)+(pow(temp.at(v0).y-temp.at(v3).y,2))));
+	cout<<fLength<<endl;
+		
+		float beta = (float) acos(((pow(dLength,2))+(pow(eLength,2))-(pow(fLength,2)))/(2*dLength*eLength));
+			cout<<beta<<endl;
+
+	 	if(alpha<beta){return true;}
+ }
+ return false;
+}
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+void tessalate(){
+
+// filling up a temp list
+vector<point> temp;
+for(int i=0; i<coords.size()-1; i++){
+	temp.push_back(coords.at(i));
+}	
+  
+  //looping through the temp list of points and checking in groups of 3 to see if they are concave
+  //if concave seeing if the line that would be created is inside the polygon
+  //if it is inside the polygon then we check to see if the line intersects with any line in the polygon
+  //if we have no intersections then we add the vertices to the list of triangles, delete the middle verticies from the temp list, and draw the line
+
+  for(int i=0; i<temp.size()-1; i++){
+	cout<<"in for"<<endl;
+   if(concave(i,(i+1)%temp.size(),(i+2)%temp.size(),temp)){
+	cout<<"in concave if"<<endl;
+	
+	if(insidePoly(i%temp.size(),(i+1)%temp.size(),(i+2)%temp.size(),(i+3)%temp.size(),temp)){
+		line newLine;
+		newLine.a=coords.at(i);
+		newLine.b=coords.at((i+2)%coords.size());
+		lineList.push_back(newLine);
+		if(polyIntersect()){
+			cout<<"intersect"<<endl;
+		lineList.pop_back();
+		
+		}//end if polyIntersect
+		else if(!polyIntersect()){
+			cout<<" no intersect"<<endl;
+		   //draw new line
+		   glBegin(GL_LINES);
+			cout<<temp.at(i%temp.size()).x<<"  "<<temp.at(i%temp.size()).y<<endl;
+	 	    glVertex2i(temp.at(i%temp.size()).x,temp.at(i%temp.size()).y);
+			cout<<(i+2)%temp.size()<<"  "<<temp.at((i+2)%temp.size()).x<<"  "<<temp.at((i+2)%temp.size()).y<<endl;
+		    glVertex2i(temp.at((i+2)%temp.size()).x,temp.at((i+2)%temp.size()).y);
+	           glEnd();
+		   	cout<<"c1"<<endl;	    
+		   //add triangle
+		   triangle tempTri;
+cout<<"c2"<<endl;
+		   tempTri.v1 = temp.at(i%temp.size());
+cout<<"c3"<<endl;
+		   tempTri.v2 = temp.at((i+1)%temp.size());
+cout<<"c4"<<endl;
+                   tempTri.v3 = temp.at((i+2)%temp.size());
+cout<<"c5"<<endl;
+			
+		   triList.push_back(tempTri);
+		   //remove mid point
+		   temp.erase(temp.begin()+i+1);
+
+			i=-1;	
+                 }//end else if	
+     	}//end if insidePoly
+	
+    }//end if concave
+   }//end for
+glFlush();
+
+}
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
@@ -318,7 +403,15 @@ void mouse( int button, int state, int x, int y)
 	coords.push_back(temp); 
         drawBox( x, WINDOW_MAX_Y-y );
 	drawLines();
-	 if(checkIntersect()){
+	
+	//fill lineList
+ 	 for(int i=0; i<coords.size()-1; i++){
+	line tempLine;	
+	tempLine.a=coords.at(i);
+	tempLine.b=coords.at(i+1%coords.size());	
+	lineList.push_back(tempLine);
+  	 }
+	 if(polyIntersect()){
 	  cout<<"The polygon created by these points is invalid due to two lines intersecting."<<endl;
 	  //clearBox();	
 	  }
@@ -339,7 +432,7 @@ void keyboard( unsigned char key, int x, int y )
 { 
   if ( key == 'q' || key == 'Q') exit(0);
   if ( key == 'f' || key == 'F') drawNoTess();
-  if ( key == 't' || key == 'T')        ;
+  if ( key == 't' || key == 'T') tessalate();
   if ( key == 'i' || key == 'I')        ;
   if ( key == 'p' || key == 'P')        ;
 }
