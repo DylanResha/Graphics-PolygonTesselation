@@ -171,6 +171,13 @@ void drawLines(){
 	glFlush();
 }
 //////////////////////////////////////////////////////////////////
+void resetPoly()
+{
+ glClearColor(1.0,1.0,1.0,1.0);
+ glClear(GL_COLOR_BUFFER_BIT);
+ drawLines();
+}
+//////////////////////////////////////////////////////////////////
 bool checkIntersect(int m, int l){
 //all x's and y's
 		float x1 = (lineList.at(m).a.x);
@@ -210,7 +217,7 @@ bool polyIntersect(){
 	cout<<lineList.size()<<endl;
 	for(int i=0; i<lineList.size()-1; i++){
 	   int j = (i+1);	
-	 for(int k=0; k<coords.size()-3; k++){
+	 for(int k=0; k<coords.size()-1; k++){
 		
 		if(checkIntersect(i,j%lineList.size())){return true;}
 		j++;
@@ -255,9 +262,11 @@ return false;
 }
 //////////////////////////////////////////////////////////////////
 bool insidePoly(int v0, int v1, int v2, int v3,vector<point>& temp){
+  
 	
-
-   if((temp.at(v2).y) > ((temp.at(v3).y))){
+	if(((temp.at(v0).x<temp.at(v2).x)&&(temp.at(v2).x<temp.at(v3).x)) && ((temp.at(v0).y<temp.at(v2).y)&&(temp.at(v2).y<temp.at(v3).y))){return true;}
+	
+	if((temp.at(v0).x<temp.at(v2).x)&&(temp.at(v0).y<temp.at(v2).y)&&((temp.at(v2).x>temp.at(v3).x)&&(temp.at(v2).y>temp.at(v3).y))){
 	cout<<"in poly if"<<endl;	
 	//angle alpha
 	int aLength = sqrt((pow(temp.at(v2).x-temp.at(v1).x,2)+(pow(temp.at(v2).y-temp.at(v1).y,2))));
@@ -266,8 +275,10 @@ bool insidePoly(int v0, int v1, int v2, int v3,vector<point>& temp){
 	cout<<bLength<<endl;
 	int cLength = sqrt((pow(temp.at(v1).x-temp.at(v0).x,2)+(pow(temp.at(v1).y-temp.at(v0).y,2))));
 	cout<<cLength<<endl;
-	
-		float alpha = (float) acos(((pow(aLength,2))+(pow(bLength,2))-(pow(cLength,2)))/(2*aLength*bLength));
+
+		float alpha = fabs(((pow(aLength,2))+(pow(bLength,2))-(pow(cLength,2)))/(2*aLength*bLength));
+		while(alpha>1){alpha=alpha-1;}
+		float angleA = (float) acos(alpha);
 			cout<<alpha<<endl;
 
 
@@ -279,12 +290,15 @@ bool insidePoly(int v0, int v1, int v2, int v3,vector<point>& temp){
 	int fLength = sqrt((pow(temp.at(v1).x-temp.at(v3).x,2)+(pow(temp.at(v1).y-temp.at(v3).y,2))));
 	cout<<fLength<<endl;
 		
-		float beta = (float) acos(((pow(dLength,2))+(pow(eLength,2))-(pow(fLength,2)))/(2*dLength*eLength));
+		float beta = fabs(((pow(dLength,2))+(pow(eLength,2))-(pow(fLength,2)))/(2*dLength*eLength));
+		while(beta>1){beta=beta-1;}
+		float angleB = (float) acos(beta);
 			cout<<beta<<endl;
 
-	 	if(alpha<beta){return true;}
+	 	if(angleA<angleB){return true;}
+		
 	}
-   else{
+   else {
 	cout<<"in poly else"<<endl;	
 	//angle alpha
 	int aLength = sqrt((pow(temp.at(v2).x-temp.at(v1).x,2)+(pow(temp.at(v2).y-temp.at(v1).y,2))));
@@ -293,23 +307,28 @@ bool insidePoly(int v0, int v1, int v2, int v3,vector<point>& temp){
 	cout<<bLength<<endl;
 	int cLength = sqrt((pow(temp.at(v1).x-temp.at(v0).x,2)+(pow(temp.at(v1).y-temp.at(v0).y,2))));
 	cout<<cLength<<endl;
-	
-		float alpha = (float) acos(((pow(aLength,2))+(pow(bLength,2))-(pow(cLength,2)))/(2*aLength*bLength));
+		
+		float alpha = fabs(((pow(aLength,2))+(pow(bLength,2))-(pow(cLength,2)))/(2*aLength*bLength));
+		while(alpha>1){alpha=alpha-1;}
+		float angleA = (float) acos(alpha);
 			cout<<alpha<<endl;
 
 
 	//angle beta
-	int dLength = sqrt((pow(temp.at(v2).x-temp.at(v1).x,2)+(pow(temp.at(v2).y-temp.at(v1).y,2))));
+	int dLength = sqrt((pow(temp.at(v2).x-temp.at(v0).x,2)+(pow(temp.at(v2).y-temp.at(v0).y,2))));
 	cout<<dLength<<endl;
 	int eLength = sqrt((pow(temp.at(v3).x-temp.at(v2).x,2)+(pow(temp.at(v3).y-temp.at(v2).y,2))));
 	cout<<eLength<<endl;
 	int fLength = sqrt((pow(temp.at(v0).x-temp.at(v3).x,2)+(pow(temp.at(v0).y-temp.at(v3).y,2))));
 	cout<<fLength<<endl;
 		
-		float beta = (float) acos(((pow(dLength,2))+(pow(eLength,2))-(pow(fLength,2)))/(2*dLength*eLength));
+		float beta = fabs(((pow(dLength,2))+(pow(eLength,2))-(pow(fLength,2)))/(2*dLength*eLength));
+		while(beta>1){beta=beta-1;}
+		float angleB = (float) acos(beta);
+		 angleB=angleB+angleA;
 			cout<<beta<<endl;
 
-	 	if(alpha<beta){return true;}
+	 	if(angleA<angleB){return true;}
  }
  return false;
 }
@@ -324,16 +343,17 @@ for(int i=0; i<coords.size()-1; i++){
 }	
   
   //looping through the temp list of points and checking in groups of 3 to see if they are concave
-  //if concave seeing if the line that would be created is inside the polygon
+  //seeing if the line that would be created is inside the polygon
   //if it is inside the polygon then we check to see if the line intersects with any line in the polygon
   //if we have no intersections then we add the vertices to the list of triangles, delete the middle verticies from the temp list, and draw the line
 
   for(int i=0; i<temp.size()-1; i++){
 	cout<<"in for"<<endl;
+	cout<<"i= "<<i<<endl;
    if(concave(i,(i+1)%temp.size(),(i+2)%temp.size(),temp)){
 	cout<<"in concave if"<<endl;
 	
-	if(insidePoly(i%temp.size(),(i+1)%temp.size(),(i+2)%temp.size(),(i+3)%temp.size(),temp)){
+	if(insidePoly(i,(i+1)%temp.size(),(i+2)%temp.size(),(i+3)%temp.size(),temp)){
 		line newLine;
 		newLine.a=coords.at(i);
 		newLine.b=coords.at((i+2)%coords.size());
@@ -352,6 +372,7 @@ for(int i=0; i<coords.size()-1; i++){
 			cout<<(i+2)%temp.size()<<"  "<<temp.at((i+2)%temp.size()).x<<"  "<<temp.at((i+2)%temp.size()).y<<endl;
 		    glVertex2i(temp.at((i+2)%temp.size()).x,temp.at((i+2)%temp.size()).y);
 	           glEnd();
+		   glFlush();
 		   	cout<<"c1"<<endl;	    
 		   //add triangle
 		   triangle tempTri;
@@ -365,15 +386,17 @@ cout<<"c5"<<endl;
 			
 		   triList.push_back(tempTri);
 		   //remove mid point
+			cout<<temp.at(i).x<<endl;
 		   temp.erase(temp.begin()+i+1);
-
-			i=-1;	
+			cout<<temp.at(i).x<<endl;
+			i=-1;
+			cout<<"i= "<<i<<endl;	
                  }//end else if	
      	}//end if insidePoly
 	
     }//end if concave
    }//end for
-glFlush();
+//glFlush();
 
 }
 //////////////////////////////////////////////////////////////////
@@ -421,11 +444,11 @@ void mouse( int button, int state, int x, int y)
 	
      }
   
- /* if ( button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN )
+  if ( button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN )
      {
         printf ("%d   %d\n", x,y);
         clearBox();
-     }*/
+     }
 }
 //////////////////////////////////////////////////////////////////
 void keyboard( unsigned char key, int x, int y )
@@ -433,7 +456,7 @@ void keyboard( unsigned char key, int x, int y )
   if ( key == 'q' || key == 'Q') exit(0);
   if ( key == 'f' || key == 'F') drawNoTess();
   if ( key == 't' || key == 'T') tessalate();
-  if ( key == 'i' || key == 'I')        ;
+  if ( key == 'i' || key == 'I') resetPoly();
   if ( key == 'p' || key == 'P')        ;
 }
 
